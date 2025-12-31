@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -153,21 +153,13 @@ button:hover {
   <div class="controls">
     <button id="boom">🎆 Firework Boost</button>
     <button id="confetti">🎁 Confetti</button>
-    <button id="musicBtn">🎵 Music</button>
   </div>
 
   <div class="score">🔥 Fireworks Launched: <span id="score">0</span></div>
 </div>
 
-<!-- 🎵 MUSIC (royalty-free link placeholder) -->
-<audio id="music" loop>
-  <source src="https://cdn.pixabay.com/audio/2022/10/09/audio_8c67a6a6b5.mp3">
-</audio>
-
 <script>
-/* COUNTDOWN + MUSIC */
-let musicStarted = false;
-
+/* COUNTDOWN */
 function tick() {
   const target = new Date("Jan 1, 2026 00:00:00").getTime();
   const now = Date.now();
@@ -183,16 +175,14 @@ function tick() {
   $("#m").text(m);
   $("#s").text(s);
 
-  if (diff <= 0 && !musicStarted) {
-    document.getElementById("music").play();
-    musicStarted = true;
+  if (diff <= 0) {
     $("body").addClass("shake");
   }
 }
 setInterval(tick, 1000);
 tick();
 
-/* 3D FIREWORKS */
+/* FIREWORKS */
 const c = document.getElementById("fx");
 const ctx = c.getContext("2d");
 resize();
@@ -242,16 +232,14 @@ function animate() {
 }
 animate();
 
-setInterval(()=>firework(Math.random()*c.width, Math.random()*c.height/2),800);
+setInterval(() => 
+  firework(Math.random()*c.width, Math.random()*c.height/2), 800
+);
 
 /* BUTTONS */
-$("#boom").click(()=>firework(innerWidth/2, innerHeight/3, 300));
-$("#confetti").click(()=>firework(Math.random()*c.width, 50, 400));
-$("#musicBtn").click(()=>{
-  const m = document.getElementById("music");
-  m.paused ? m.play() : m.pause();
-});
+$("#boom").click(() => firework(innerWidth/2, innerHeight/3, 300));
+$("#confetti").click(() => firework(Math.random()*c.width, 50, 400));
 </script>
 
 </body>
-</html>
+</html> 
