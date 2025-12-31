@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Happy New Year 2026</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;800&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --neon: #00f7ff;
+  --gold: #ffcc00;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Orbitron', sans-serif;
+}
+
+body {
+  background: radial-gradient(circle at bottom, #020111, #000);
+  overflow: hidden;
+  color: white;
+}
+
+canvas {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+}
+
+.container {
+  position: relative;
+  z-index: 2;
+  min-height: 100vh;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.title {
+  font-size: clamp(2rem, 6vw, 4rem);
+  color: var(--neon);
+  text-shadow: 0 0 20px var(--neon);
+  animation: glow 2s infinite alternate;
+}
+
+.year {
+  font-size: clamp(4rem, 10vw, 7rem);
+  color: var(--gold);
+  text-shadow: 0 0 30px var(--gold);
+  animation: float 3s ease-in-out infinite;
+}
+
+.countdown {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-top: 30px;
+  width: 100%;
+  max-width: 500px;
+}
+
+.time-box {
+  background: rgba(255,255,255,0.08);
+  border-radius: 14px;
+  padding: 15px 10px;
+  box-shadow: 0 0 20px rgba(0,255,255,.4);
+  animation: pulse 1.5s infinite alternate;
+}
+
+.time-box span {
+  font-size: clamp(1.5rem, 5vw, 2.5rem);
+  display: block;
+}
+
+.controls {
+  display: flex;
+  gap: 15px;
+  margin-top: 30px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+button {
+  background: linear-gradient(45deg, #00f7ff, #0077ff);
+  border: none;
+  border-radius: 30px;
+  padding: 12px 22px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  color: black;
+  box-shadow: 0 0 15px var(--neon);
+  transition: transform .2s;
+}
+
+button:hover {
+  transform: scale(1.1);
+}
+
+.score {
+  margin-top: 15px;
+  font-size: 0.9rem;
+  opacity: 0.8;
+}
+
+/* Animations */
+@keyframes glow {
+  from { text-shadow: 0 0 10px var(--neon); }
+  to { text-shadow: 0 0 40px var(--neon); }
+}
+@keyframes float {
+  50% { transform: translateY(-15px); }
+}
+@keyframes pulse {
+  from { transform: scale(1); }
+  to { transform: scale(1.05); }
+}
+.shake {
+  animation: shake .3s;
+}
+@keyframes shake {
+  0%,100% { transform: translate(0); }
+  25% { transform: translate(5px); }
+  50% { transform: translate(-5px); }
+  75% { transform: translate(3px); }
+}
+</style>
+</head>
+
+<body>
+
+<canvas id="fx"></canvas>
+
+<div class="container">
+  <div class="title">🎉 HAPPY NEW YEAR 🎉</div>
+  <div class="year">2026</div>
+
+  <div class="countdown">
+    <div class="time-box"><span id="d">0</span>DAYS</div>
+    <div class="time-box"><span id="h">0</span>HOURS</div>
+    <div class="time-box"><span id="m">0</span>MIN</div>
+    <div class="time-box"><span id="s">0</span>SEC</div>
+  </div>
+
+  <div class="controls">
+    <button id="boom">🎆 Firework Boost</button>
+    <button id="confetti">🎁 Confetti</button>
+    <button id="musicBtn">🎵 Music</button>
+  </div>
+
+  <div class="score">🔥 Fireworks Launched: <span id="score">0</span></div>
+</div>
+
+<!-- 🎵 MUSIC (royalty-free link placeholder) -->
+<audio id="music" loop>
+  <source src="https://cdn.pixabay.com/audio/2022/10/09/audio_8c67a6a6b5.mp3">
+</audio>
+
+<script>
+/* COUNTDOWN + MUSIC */
+let musicStarted = false;
+
+function tick() {
+  const target = new Date("Jan 1, 2026 00:00:00").getTime();
+  const now = Date.now();
+  const diff = target - now;
+
+  const d = Math.floor(diff / 86400000);
+  const h = Math.floor(diff / 3600000) % 24;
+  const m = Math.floor(diff / 60000) % 60;
+  const s = Math.floor(diff / 1000) % 60;
+
+  $("#d").text(d);
+  $("#h").text(h);
+  $("#m").text(m);
+  $("#s").text(s);
+
+  if (diff <= 0 && !musicStarted) {
+    document.getElementById("music").play();
+    musicStarted = true;
+    $("body").addClass("shake");
+  }
+}
+setInterval(tick, 1000);
+tick();
+
+/* 3D FIREWORKS */
+const c = document.getElementById("fx");
+const ctx = c.getContext("2d");
+resize();
+window.onresize = resize;
+
+let particles = [];
+let score = 0;
+
+function resize() {
+  c.width = innerWidth;
+  c.height = innerHeight;
+}
+
+function firework(x, y, power = 120) {
+  score++;
+  $("#score").text(score);
+  for (let i = 0; i < power; i++) {
+    particles.push({
+      x, y,
+      z: Math.random() * 2,
+      vx: (Math.random() - .5) * 6,
+      vy: (Math.random() - .5) * 6,
+      life: 100,
+      color: `hsl(${Math.random()*360},100%,60%)`
+    });
+  }
+}
+
+function animate() {
+  ctx.fillStyle = "rgba(0,0,0,.2)";
+  ctx.fillRect(0,0,c.width,c.height);
+
+  particles.forEach((p,i)=>{
+    p.x += p.vx;
+    p.y += p.vy + p.z;
+    p.life--;
+
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.z+1, 0, Math.PI*2);
+    ctx.fillStyle = p.color;
+    ctx.fill();
+
+    if (p.life <= 0) particles.splice(i,1);
+  });
+
+  requestAnimationFrame(animate);
+}
+animate();
+
+setInterval(()=>firework(Math.random()*c.width, Math.random()*c.height/2),800);
+
+/* BUTTONS */
+$("#boom").click(()=>firework(innerWidth/2, innerHeight/3, 300));
+$("#confetti").click(()=>firework(Math.random()*c.width, 50, 400));
+$("#musicBtn").click(()=>{
+  const m = document.getElementById("music");
+  m.paused ? m.play() : m.pause();
+});
+</script>
+
+</body>
+</html>
